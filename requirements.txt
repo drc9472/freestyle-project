@@ -5,6 +5,7 @@ pandas
 sodapy
 plotly
 python-dotenv
+pytest
 
 
 

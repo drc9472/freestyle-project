@@ -6,6 +6,6 @@ sodapy
 plotly
 python-dotenv
 pytest
-
+tkinter
 
 

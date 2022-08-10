@@ -2,6 +2,7 @@ from typing import no_type_check
 import os
 from pandas import read_csv
 from dotenv import load_dotenv
+from tkinter import *
 
 load_dotenv()
 
@@ -23,11 +24,41 @@ print(nyc_odata_df.columns)
 
 alphavantage_df = read_csv(alphavantage_csv_filepath)
 print(alphavantage_df.columns)
+neighborhoods_df = nyc_odata_df["neighborhood"]
+print(type(neighborhoods_df))
+neighborhoods = neighborhoods_df.values.tolist()
+unique_neighborhoods = list(set(neighborhoods))
 
-neighborhood = input("Please type in a NYC neighborhood you'd like to analyze:") # @param ['BEDFORD STUYVESANT', 'CHELSEA', 'ELMHURST' "Other"]
+OPTIONS = unique_neighborhoods
+master = Tk()
+
+variable = StringVar(master)
+variable.set(OPTIONS[0]) # default value
+
+w = OptionMenu(master, variable, *OPTIONS)
+w.pack()
+
+def ok():
+    print ("value is:" + variable.get())
+    
+
+button = Button(master, text="Confirm Selection(s)", command=ok)
+button.pack()
+
+# Button for closing
+exit_button = Button(master, text="Display Results", command=master.destroy)
+exit_button.pack()
+
+mainloop()
+
+
+
+#print(type(unique_neighborhoods))
+#print(unique_neighborhoods)
+#neighborhood = input("Please type in a NYC neighborhood you'd like to analyze:") # @param ['BEDFORD STUYVESANT', 'CHELSEA', 'ELMHURST' "Other"]
 #add error
-neighborhood = neighborhood.upper()
-print(neighborhood)
+
+
 
 #try:
 #    

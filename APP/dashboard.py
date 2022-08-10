@@ -4,6 +4,7 @@ from pandas import read_csv
 from dotenv import load_dotenv
 from tkinter import *
 
+
 load_dotenv()
 
 key1 = os.environ.get("nyc_odata_api_key")
@@ -17,15 +18,16 @@ key2 = os.environ.get("alphavantage_api_key")
 
 nyc_odata_csv_filepath = f"https://data.cityofnewyork.us/resource/9ck6-2jew.csv?$limit=28500&$$app_token={key1}"
 nyc_odata_df = read_csv(nyc_odata_csv_filepath)
+nyc_odata_df = nyc_odata_df.dropna(subset=["neighborhood"])
 alphavantage_csv_filepath = f"https://www.alphavantage.co/query?function=INFLATION&datatype=csv&apikey={key2}"
 print(nyc_odata_csv_filepath)
 print(alphavantage_csv_filepath)
-print(nyc_odata_df.columns)
+
 
 alphavantage_df = read_csv(alphavantage_csv_filepath)
-print(alphavantage_df.columns)
+
 neighborhoods_df = nyc_odata_df["neighborhood"]
-print(type(neighborhoods_df))
+
 neighborhoods = neighborhoods_df.values.tolist()
 unique_neighborhoods = list(set(neighborhoods))
 
@@ -38,18 +40,29 @@ variable.set(OPTIONS[0]) # default value
 w = OptionMenu(master, variable, *OPTIONS)
 w.pack()
 
-def ok():
-    print ("value is:" + variable.get())
-    
-
-button = Button(master, text="Confirm Selection(s)", command=ok)
-button.pack()
+#def ok():
+#    selection = variable.get()
+#    #print ("value is:" + variable.get())
+#    str(selection)
+#    #print(nyc_odata_df.filter(like=selection, axis="neighborhood"))
+#    
+#    
+#
+#    
+#
+#button = Button(master, text="Confirm Selection", command=ok)
+#button.pack()
 
 # Button for closing
 exit_button = Button(master, text="Display Results", command=master.destroy)
 exit_button.pack()
 
 mainloop()
+
+selection = variable.get()
+print ("value is:" + variable.get())
+filttered_df = nyc_odata_df[nyc_odata_df["neighborhood"].str.contains(selection)]
+rent_price_df = nyc_odata_df.groupby("report_year").market_value_per_sqft.mean()
 
 
 

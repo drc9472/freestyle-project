@@ -68,7 +68,8 @@ mainloop()
 selection = variable.get()
 print ("value is:" + variable.get())
 filtered_df = nyc_odata_df[nyc_odata_df["neighborhood"].str.contains(selection)]
-rent_price_df = filtered_df.groupby("report_year").market_value_per_sqft.mean()
+rent_price_df = filtered_df.groupby("report_year").market_value_per_sqft.mean().to_frame()
+rent_price_df = rent_price_df.sort_values(by='report_year', ascending=FALSE)
 print(filtered_df)
 print(rent_price_df)
 print(type(rent_price_df))
@@ -81,8 +82,29 @@ alphavantage_df = alphavantage_df[alphavantage_df["month"] == 1]
 
 m = alphavantage_df.year.isin(filtered_df.report_year)
 alphavantage_df = alphavantage_df[m]
-
+alphavantage_df = alphavantage_df.sort_values(by='year', ascending = FALSE)
 print(alphavantage_df)
+
+early_rent = rent_price_df.iloc[-1].to_dict()["market_value_per_sqft"]
+latest_rent = rent_price_df.iloc[0].to_dict()["market_value_per_sqft"]
+early_cpi = alphavantage_df.iloc[-1].to_dict()["value"]
+latest_cpi = alphavantage_df.iloc[0].to_dict()["value"]
+valuation_variable = (latest_rent -early_rent) - (latest_rent * (early_cpi/latest_cpi))
+try:
+    rent_price_df.iloc[1]
+except:
+    print("Not enough data")
+    quit()
+
+
+print(valuation_variable)
+
+if valuation_variable > 0:
+    print("UNDERVALUED")
+elif valuation_variable == 0:
+    print("FAIR MARKET VALUE")
+else:
+    print("OVERVALUED")
 
 #seperate year and month
 #get rid of July

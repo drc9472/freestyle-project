@@ -3,7 +3,7 @@
 
 pandas
 sodapy
-plotly
+plotly==5.9.0
 python-dotenv
 pytest
 

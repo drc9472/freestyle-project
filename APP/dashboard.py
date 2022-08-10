@@ -1,8 +1,14 @@
 from typing import no_type_check
 import os
+import pandas as pd
 from pandas import read_csv
 from dotenv import load_dotenv
 from tkinter import *
+import plotly.graph_objects as go
+
+
+
+
 
 
 load_dotenv()
@@ -19,9 +25,9 @@ key2 = os.environ.get("alphavantage_api_key")
 nyc_odata_csv_filepath = f"https://data.cityofnewyork.us/resource/9ck6-2jew.csv?$limit=28500&$$app_token={key1}"
 nyc_odata_df = read_csv(nyc_odata_csv_filepath)
 nyc_odata_df = nyc_odata_df.dropna(subset=["neighborhood"])
-alphavantage_csv_filepath = f"https://www.alphavantage.co/query?function=INFLATION&datatype=csv&apikey={key2}"
-print(nyc_odata_csv_filepath)
-print(alphavantage_csv_filepath)
+alphavantage_csv_filepath = f"https://www.alphavantage.co/query?function=CPI&interval=semiannual&datatype=csv&apikey={key2}"
+
+
 
 
 alphavantage_df = read_csv(alphavantage_csv_filepath)
@@ -61,16 +67,35 @@ mainloop()
 
 selection = variable.get()
 print ("value is:" + variable.get())
-filttered_df = nyc_odata_df[nyc_odata_df["neighborhood"].str.contains(selection)]
-rent_price_df = nyc_odata_df.groupby("report_year").market_value_per_sqft.mean()
+filtered_df = nyc_odata_df[nyc_odata_df["neighborhood"].str.contains(selection)]
+rent_price_df = filtered_df.groupby("report_year").market_value_per_sqft.mean()
+print(filtered_df)
+print(rent_price_df)
+print(type(rent_price_df))
 
 
+print(alphavantage_df)
+alphavantage_df["year"]=pd.DatetimeIndex(alphavantage_df['timestamp']).year
+alphavantage_df["month"]=pd.DatetimeIndex(alphavantage_df['timestamp']).month
+alphavantage_df = alphavantage_df[alphavantage_df["month"] == 1]
+
+m = alphavantage_df.year.isin(filtered_df.report_year)
+alphavantage_df = alphavantage_df[m]
+
+print(alphavantage_df)
+
+#seperate year and month
+#get rid of July
+#filter cpi years based off rent price years
+#formula for rent years v cpi years plus one
+#plotly compare
 
 #print(type(unique_neighborhoods))
 #print(unique_neighborhoods)
 #neighborhood = input("Please type in a NYC neighborhood you'd like to analyze:") # @param ['BEDFORD STUYVESANT', 'CHELSEA', 'ELMHURST' "Other"]
 #add error
 
+#average_rent = go.Scatter(x=rent_price)
 
 
 #try:

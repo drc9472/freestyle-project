@@ -36,7 +36,6 @@ neighborhoods_df = nyc_odata_df["neighborhood"]
 
 neighborhoods = neighborhoods_df.values.tolist()
 unique_neighborhoods = list(set(neighborhoods))
-
 OPTIONS = unique_neighborhoods
 master = Tk()
 
@@ -68,14 +67,15 @@ mainloop()
 selection = variable.get()
 print ("value is:" + variable.get())
 filtered_df = nyc_odata_df[nyc_odata_df["neighborhood"].str.contains(selection)]
-rent_price_df = filtered_df.groupby("report_year").market_value_per_sqft.mean().to_frame()
+rent_price_df = filtered_df.groupby("report_year").market_value_per_sqft.mean().to_frame().reset_index()
+rent_price_df.rename(columns={'index':'report_year'})
 rent_price_df = rent_price_df.sort_values(by='report_year', ascending=FALSE)
-print(filtered_df)
-print(rent_price_df)
-print(type(rent_price_df))
 
 
-print(alphavantage_df)
+
+
+
+#print(alphavantage_df)
 alphavantage_df["year"]=pd.DatetimeIndex(alphavantage_df['timestamp']).year
 alphavantage_df["month"]=pd.DatetimeIndex(alphavantage_df['timestamp']).month
 alphavantage_df = alphavantage_df[alphavantage_df["month"] == 1]
@@ -83,7 +83,7 @@ alphavantage_df = alphavantage_df[alphavantage_df["month"] == 1]
 m = alphavantage_df.year.isin(filtered_df.report_year)
 alphavantage_df = alphavantage_df[m]
 alphavantage_df = alphavantage_df.sort_values(by='year', ascending = FALSE)
-print(alphavantage_df)
+
 
 early_rent = rent_price_df.iloc[-1].to_dict()["market_value_per_sqft"]
 latest_rent = rent_price_df.iloc[0].to_dict()["market_value_per_sqft"]
@@ -106,27 +106,27 @@ elif valuation_variable == 0:
 else:
     print("OVERVALUED")
 
-#seperate year and month
-#get rid of July
-#filter cpi years based off rent price years
-#formula for rent years v cpi years plus one
-#plotly compare
+rent_prices = go.Scatter(x=rent_price_df['report_year'], y=rent_price_df['market_value_per_sqft'], name='Average Rent Price Per Sqft')
+cpi_trend = go.Scatter(x=alphavantage_df['year'], y=alphavantage_df['value'], name='CPI Index')
 
-#print(type(unique_neighborhoods))
-#print(unique_neighborhoods)
-#neighborhood = input("Please type in a NYC neighborhood you'd like to analyze:") # @param ['BEDFORD STUYVESANT', 'CHELSEA', 'ELMHURST' "Other"]
-#add error
-
-#average_rent = go.Scatter(x=rent_price)
+fig = go.Figure(data=[rent_prices, cpi_trend])
+fig.update_layout(title=f"{selection} Average Rent v CPI Index")
+fig.show()
 
 
-#try:
-#    
-#    
-#    nyc_odata_df["boro_block_lot"]
-#    print(nyc_odata_df.columns)
-#except:
-#    print("OOPS: Invalid entry. Please try again with a different neighborhood.")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

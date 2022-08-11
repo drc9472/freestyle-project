@@ -44,6 +44,8 @@ If an error message populates, please install:
 ## API Keys
 Note that API Keys are required to access the databases used for this dashboard. You must locally create a .env within the /Documents/GitHub/freestyle-project/APP file repository and save the two API keys nyc_odata_api_key and alphavantage_api_key.
 
+Not having the access keys is the reason this software looks as if there are testing issues. Once you have the access key you should be able to run the program smoothly. 
+
 # Usage
 After the setup is complete, please demonstrate your ability to run the Python script from the command-line.
 ## NYC Home Valuator Application

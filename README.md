@@ -39,8 +39,12 @@ Check for Anaconda installation in the command-line to ensure Anaconda has been 
 conda --version
 ```
 If an error message populates, please install:
-[Anaconda](https://www.anaconda.com/products/distribution) to successfully play a game of rock, paper, scissors. 
-## Usage
+[Anaconda](https://www.anaconda.com/products/distribution) to successfully use this dashboard.
+
+## API Keys
+Note that API Keys are required to access the databases used for this dashboard. You must locally create a .env within the /Documents/GitHub/freestyle-project/APP file repository and save the two API keys nyc_odata_api_key and alphavantage_api_key.
+
+# Usage
 After the setup is complete, please demonstrate your ability to run the Python script from the command-line.
 ## NYC Home Valuator Application
 Navigate to APP folder

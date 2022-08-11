@@ -118,7 +118,7 @@ def valuation(input):
     fig.update_layout(title=f"{selection} Average Rent v CPI Index")
     fig.show()
     return value_estimate
-valuation(variable.get())
+#valuation(variable.get())
 
 if __name__ == "__main__":
     print(f"Your selection is {selection}")

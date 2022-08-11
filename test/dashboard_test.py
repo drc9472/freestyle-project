@@ -2,7 +2,7 @@
 import os
 import pytest
 
-from APP.dashboard import valuation 
+from app.dashboard import valuation 
 
 def test_valuation():
     results = valuation("Long Island City")

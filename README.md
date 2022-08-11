@@ -28,6 +28,9 @@ Install package dependencies (mainly for testing):
 ```sh
 pip install -r requirements.txt
 ```
+
+Clone your github repo on your local to new location. Follow your setup guide. And add .env and test. Check if its running after adding env file. Then you are good to go
+
 ## Testing
 Run tests:
 ```sh

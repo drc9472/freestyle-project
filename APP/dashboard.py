@@ -99,14 +99,17 @@ def valuation(input):
         quit()
 
 
-    print(valuation_variable)
+    
 
     if valuation_variable > 0:
-        print("UNDERVALUED")
+        value_estimate = "UNDERVALUED"
+        print(value_estimate)
     elif valuation_variable == 0:
-        print("FAIR MARKET VALUE")
+        value_estimate = "FAIR MARKET VALUE"
+        print(value_estimate)
     else:
-        print("OVERVALUED")
+        value_estimate = "OVERVALUED"
+        print(value_estimate)
 
     rent_prices = go.Scatter(x=rent_price_df['report_year'], y=rent_price_df['market_value_per_sqft'], name='Average Rent Price Per Sqft')
     cpi_trend = go.Scatter(x=alphavantage_df['year'], y=alphavantage_df['value'], name='CPI Index')
@@ -114,9 +117,12 @@ def valuation(input):
     fig = go.Figure(data=[rent_prices, cpi_trend])
     fig.update_layout(title=f"{selection} Average Rent v CPI Index")
     fig.show()
+    return value_estimate
 valuation(variable.get())
 
-
+if __name__ == "__main__":
+    print(f"Your selection is {selection}")
+    result = valuation(input)
 
 
 

@@ -65,56 +65,64 @@ exit_button.pack()
 mainloop()
 
 selection = variable.get()
-print ("value is:" + variable.get())
-filtered_df = nyc_odata_df[nyc_odata_df["neighborhood"].str.contains(selection)]
-rent_price_df = filtered_df.groupby("report_year").market_value_per_sqft.mean().to_frame().reset_index()
-rent_price_df.rename(columns={'index':'report_year'})
-rent_price_df = rent_price_df.sort_values(by='report_year', ascending=FALSE)
+input = selection
+def valuation(input):
+    print ("value is:" + input)
+    filtered_df = nyc_odata_df[nyc_odata_df["neighborhood"].str.contains(selection)]
+    rent_price_df = filtered_df.groupby("report_year").market_value_per_sqft.mean().to_frame().reset_index()
+    rent_price_df.rename(columns={'index':'report_year'})
+    rent_price_df = rent_price_df.sort_values(by='report_year', ascending=FALSE)
 
 
 
+    global alphavantage_df
+
+    #print(alphavantage_df)
+    alphavantage_df["year"]=pd.DatetimeIndex(alphavantage_df['timestamp']).year
+    alphavantage_df["month"]=pd.DatetimeIndex(alphavantage_df['timestamp']).month
+    alphavantage_df = alphavantage_df[alphavantage_df["month"] == 1]
+
+    m = alphavantage_df.year.isin(filtered_df.report_year)
+    alphavantage_df = alphavantage_df[m]
+    alphavantage_df = alphavantage_df.sort_values(by='year', ascending = FALSE)
 
 
-#print(alphavantage_df)
-alphavantage_df["year"]=pd.DatetimeIndex(alphavantage_df['timestamp']).year
-alphavantage_df["month"]=pd.DatetimeIndex(alphavantage_df['timestamp']).month
-alphavantage_df = alphavantage_df[alphavantage_df["month"] == 1]
-
-m = alphavantage_df.year.isin(filtered_df.report_year)
-alphavantage_df = alphavantage_df[m]
-alphavantage_df = alphavantage_df.sort_values(by='year', ascending = FALSE)
-
-
-early_rent = rent_price_df.iloc[-1].to_dict()["market_value_per_sqft"]
-latest_rent = rent_price_df.iloc[0].to_dict()["market_value_per_sqft"]
-early_cpi = alphavantage_df.iloc[-1].to_dict()["value"]
-latest_cpi = alphavantage_df.iloc[0].to_dict()["value"]
-valuation_variable = (latest_rent -early_rent) - (latest_rent * (early_cpi/latest_cpi))
-try:
-    rent_price_df.iloc[1]
-except:
-    print("Not enough data")
-    quit()
+    early_rent = rent_price_df.iloc[-1].to_dict()["market_value_per_sqft"]
+    latest_rent = rent_price_df.iloc[0].to_dict()["market_value_per_sqft"]
+    early_cpi = alphavantage_df.iloc[-1].to_dict()["value"]
+    latest_cpi = alphavantage_df.iloc[0].to_dict()["value"]
+    valuation_variable = (latest_rent -early_rent) - (latest_rent * (early_cpi/latest_cpi))
+    try:
+        rent_price_df.iloc[1]
+    except:
+        print("Not enough data")
+        quit()
 
 
-print(valuation_variable)
+    
 
-if valuation_variable > 0:
-    print("UNDERVALUED")
-elif valuation_variable == 0:
-    print("FAIR MARKET VALUE")
-else:
-    print("OVERVALUED")
+    if valuation_variable > 0:
+        value_estimate = "UNDERVALUED"
+        print(value_estimate)
+    elif valuation_variable == 0:
+        value_estimate = "FAIR MARKET VALUE"
+        print(value_estimate)
+    else:
+        value_estimate = "OVERVALUED"
+        print(value_estimate)
 
-rent_prices = go.Scatter(x=rent_price_df['report_year'], y=rent_price_df['market_value_per_sqft'], name='Average Rent Price Per Sqft')
-cpi_trend = go.Scatter(x=alphavantage_df['year'], y=alphavantage_df['value'], name='CPI Index')
+    rent_prices = go.Scatter(x=rent_price_df['report_year'], y=rent_price_df['market_value_per_sqft'], name='Average Rent Price Per Sqft')
+    cpi_trend = go.Scatter(x=alphavantage_df['year'], y=alphavantage_df['value'], name='CPI Index')
 
-fig = go.Figure(data=[rent_prices, cpi_trend])
-fig.update_layout(title=f"{selection} Average Rent v CPI Index")
-fig.show()
+    fig = go.Figure(data=[rent_prices, cpi_trend])
+    fig.update_layout(title=f"{selection} Average Rent v CPI Index")
+    fig.show()
+    return value_estimate
+valuation(variable.get())
 
-
-
+if __name__ == "__main__":
+    print(f"Your selection is {selection}")
+    result = valuation(input)
 
 
 
